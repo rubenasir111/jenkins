@@ -4,6 +4,8 @@ pipeline {
     environment {
         VIRTUAL_ENV = "${WORKSPACE}/venv"
         PATH = "${VIRTUAL_ENV}/bin:${env.PATH}"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
+        HOME = "/var/lib/jenkins"
     }
 
     stages {
