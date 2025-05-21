@@ -49,16 +49,6 @@ pipeline {
                 sh 'docker build -t jenkins:v1 .'
             }
         }
-
-        stage('Desplegar en Kubernetes') {
-            steps {
-                sh '''
-                    minikube start --driver=docker || true
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-                '''
-            }
-        }
     }
 
     post {
