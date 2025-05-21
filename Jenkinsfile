@@ -43,6 +43,7 @@ pipeline {
                 junit '**/test-results/*.xml'
             }
         }
+    }
 
     post {
         always {
