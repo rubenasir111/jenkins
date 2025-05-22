@@ -4,7 +4,6 @@ pipeline {
     environment {
         VIRTUAL_ENV = "${WORKSPACE}/venv"
         PATH = "${VIRTUAL_ENV}/bin:${env.PATH}"
-        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -51,10 +50,15 @@ pipeline {
             }
         }
 
-        stage('Iniciar Minikube') {
+        stage('Preparar Minikube') {
             steps {
                 sh '''
-                    minikube start --driver=docker --kubeconfig=$KUBECONFIG || true
+                    echo "Otorgando permisos al directorio .minikube"
+                    sudo chown -R $USER $HOME/.minikube || true
+                    sudo chmod -R u+wrx $HOME/.minikube || true
+
+                    echo "Iniciando Minikube con driver Docker"
+                    minikube start --driver=docker || true
                 '''
             }
         }
@@ -62,8 +66,9 @@ pipeline {
         stage('Desplegar en Kubernetes') {
             steps {
                 sh '''
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
+                    echo "Aplicando deployment y service en Kubernetes"
+                    kubectl apply -f k8s/deployment.yaml || exit 1
+                    kubectl apply -f k8s/service.yaml || exit 1
                 '''
             }
         }
@@ -75,3 +80,4 @@ pipeline {
         }
     }
 }
+
